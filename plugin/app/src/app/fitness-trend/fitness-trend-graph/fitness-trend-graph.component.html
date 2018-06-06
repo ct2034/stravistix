@@ -22,17 +22,17 @@
 
 					<!--Date-->
 					<tr class="date">
-						<td>
+						<td colspan="2">
 							{{viewedDay.printShortDate()}}
-						</td>
-						<td class="open">
-							<span *ngIf="viewedDay.hasActivities()">(click to open)</span>
 						</td>
 					</tr>
 
 					<tr class="typesCount">
-						<td colspan="2">
+						<td>
 							{{viewedDay.printTypesCount(2, "-")}}
+						</td>
+						<td class="open">
+							<span *ngIf="viewedDay.hasActivities()">(click to open)</span>
 						</td>
 					</tr>
 
