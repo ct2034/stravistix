@@ -13,19 +13,30 @@ import * as _ from "lodash";
 
 export class CyclingExtendedDataModifier extends AbstractExtendedDataModifier {
 
-	constructor(activityProcessor: ActivityProcessor, activityId: number, activityType: string, appResources: AppResourcesModel,
+	constructor(activityProcessor: ActivityProcessor, activityId: number, activityType: string, supportsGap: boolean, appResources: AppResourcesModel,
 				userSettings: UserSettingsModel, isAuthorOfViewedActivity: boolean, basicInfos: any, type: number) {
-		super(activityProcessor, activityId, activityType, appResources, userSettings, isAuthorOfViewedActivity, basicInfos, type);
+		super(activityProcessor, activityId, activityType, supportsGap, appResources, userSettings, isAuthorOfViewedActivity, basicInfos, type);
 	}
 
 	protected insertContentSummaryGridContent(): void {
 		super.insertContentSummaryGridContent();
 
 		// Speed and pace
-		let q3Move = "-";
+		let relevantSpeed = "-";
 		if (this.analysisData.speedData && this.userSettings.displayAdvancedSpeedData) {
-			q3Move = (this.analysisData.speedData.upperQuartileSpeed * this.speedUnitsData.speedUnitFactor).toFixed(1);
-			this.insertContentAtGridPosition(1, 0, q3Move, "75% Quartile Speed", this.speedUnitsData.speedUnitPerHour + " <span class=\"summarySubGridTitle\">(&sigma; :" + (this.analysisData.speedData.standardDeviationSpeed * this.speedUnitsData.speedUnitFactor).toFixed(1) + " )</span>", "displayAdvancedSpeedData");
+
+			let title;
+			let units;
+			if (this.analysisData.speedData.best20min) {
+				title = "Best 20min Speed";
+				relevantSpeed = (this.analysisData.speedData.best20min * this.speedUnitsData.speedUnitFactor).toFixed(1);
+				units = this.speedUnitsData.speedUnitPerHour;
+			} else {
+				relevantSpeed = (this.analysisData.speedData.upperQuartileSpeed * this.speedUnitsData.speedUnitFactor).toFixed(1);
+				title = "75% Quartile Speed";
+				units = this.speedUnitsData.speedUnitPerHour + " <span class=\"summarySubGridTitle\">(&sigma; :" + (this.analysisData.speedData.standardDeviationSpeed * this.speedUnitsData.speedUnitFactor).toFixed(1) + " )</span>";
+			}
+			this.insertContentAtGridPosition(1, 0, relevantSpeed, title, units, "displayAdvancedSpeedData");
 		}
 
 		// ...

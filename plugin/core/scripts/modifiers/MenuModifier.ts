@@ -2,13 +2,15 @@
  * Handles main burger menu
  */
 import { AppResourcesModel } from "../models/app-resources.model";
+import { AbstractModifier } from "./AbstractModifier";
 
-export class MenuModifier implements IModifier {
+export class MenuModifier extends AbstractModifier {
 
 	private athleteId: number;
 	private appResources: AppResourcesModel;
 
 	constructor(athleteId: number, appResources: AppResourcesModel) {
+		super();
 		this.athleteId = athleteId;
 		this.appResources = appResources;
 	}
@@ -19,7 +21,7 @@ export class MenuModifier implements IModifier {
 		const globalNav: JQuery = $(".global-nav");
 		let html = "<li class='drop-down-menu'>";
 
-		const menuStyle = "style='font-size:20px; background-color: transparent; color: #fc4c02;'"; //TODO Globalize colors;
+		const menuStyle = "style='font-size:20px; background-color: transparent; color: #fc4c02;'"; // TODO Globalize colors;
 		const menuIcon: string = this.appResources.menuIconOrange;
 
 		const styleSideRight = "display: inline; float: right; border-top: 1px solid #DDD; border-left: 1px solid #DDD; width: 50%;";

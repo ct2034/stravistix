@@ -1,8 +1,11 @@
-export class ActivityBikeOdoModifier implements IModifier {
+import { AbstractModifier } from "./AbstractModifier";
+
+export class ActivityBikeOdoModifier extends AbstractModifier {
 	private bikeOdoArray: any;
 	private cacheKey: string;
 
 	constructor(bikeOdoArray: any, cacheKey: string) {
+		super();
 		this.bikeOdoArray = bikeOdoArray;
 		this.cacheKey = cacheKey;
 	}
@@ -15,7 +18,7 @@ export class ActivityBikeOdoModifier implements IModifier {
 		// Get odo from map
 		let activityBikeOdo = "No bike declared";
 		try {
-			activityBikeOdo = this.bikeOdoArray[btoa(bikeDisplayedOnActivityPage)];
+			activityBikeOdo = this.bikeOdoArray[btoa(window.unescape(encodeURIComponent(bikeDisplayedOnActivityPage)))] || activityBikeOdo;
 		} catch (err) {
 			console.warn("Unable to find bike odo for this Activity");
 		}

@@ -11,11 +11,23 @@ import { SyncedActivityModel } from "../../../shared/models/sync/synced-activity
 import { StravaActivityModel } from "../../../shared/models/sync/strava-activity.model";
 import { SyncNotifyModel } from "../../../shared/models/sync/sync-notify.model";
 import { StreamActivityModel } from "../../../shared/models/sync/stream-activity.model";
+import { MessagesModel } from "../../../shared/models/messages.model";
 
 export class ActivitiesSynchronizer { // TODO Rename
 
 	public static lastSyncDateTime = "lastSyncDateTime";
 	public static syncedActivities = "syncedActivities";
+
+	public static notifyBackgroundSyncDone(extensionId: string, syncResult: SyncResultModel): void {
+		chrome.runtime.sendMessage(extensionId, {
+			method: MessagesModel.ON_EXTERNAL_SYNC_DONE,
+			params: {
+				syncResult: syncResult,
+			},
+		}, (response: any) => {
+			console.log(response);
+		});
+	}
 
 	protected appResources: AppResourcesModel;
 	protected userSettings: UserSettingsModel;
@@ -289,7 +301,7 @@ export class ActivitiesSynchronizer { // TODO Rename
 			const activitiesChangesModel = ActivitiesSynchronizer.findAddedAndEditedActivities(remoteFirstPage.firstPageModels,
 				localSyncedActivityModels);
 
-			let remoteFirstPageIds: number[] = _.map(remoteFirstPage.firstPageModels, (stravaActivityModel: StravaActivityModel) => {
+			const remoteFirstPageIds: number[] = _.map(remoteFirstPage.firstPageModels, (stravaActivityModel: StravaActivityModel) => {
 				return stravaActivityModel.id;
 			});
 
@@ -413,7 +425,7 @@ export class ActivitiesSynchronizer { // TODO Rename
 
 		const deferred = Q.defer();
 
-		const activityStreamUrl: string = "/activities/" + activityId + "/streams?stream_types[]=watts_calc&stream_types[]=watts&stream_types[]=velocity_smooth&stream_types[]=time&stream_types[]=distance&stream_types[]=cadence&stream_types[]=heartrate&stream_types[]=grade_smooth&stream_types[]=altitude&stream_types[]=latlng";
+		const activityStreamUrl: string = "/activities/" + activityId + "/streams?stream_types[]=watts_calc&stream_types[]=watts&stream_types[]=velocity_smooth&stream_types[]=time&stream_types[]=distance&stream_types[]=cadence&stream_types[]=heartrate&stream_types[]=grade_smooth&stream_types[]=altitude&stream_types[]=latlng&stream_types[]=grade_adjusted_speed";
 
 		const promiseActivityStream: JQueryXHR = $.ajax(activityStreamUrl);
 
@@ -589,7 +601,7 @@ export class ActivitiesSynchronizer { // TODO Rename
 							step: "savedSyncedActivities",
 							progress: 100,
 							pageGroupId: handledGroupCount + 1,
-							browsedActivitiesCount: this.totalRawActivityIds.length, //pagesGroupSaved.data.syncedActivities.length,
+							browsedActivitiesCount: this.totalRawActivityIds.length, // pagesGroupSaved.data.syncedActivities.length,
 						};
 
 						deferred.notify(notify);

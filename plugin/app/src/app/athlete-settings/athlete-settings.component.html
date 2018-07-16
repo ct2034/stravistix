@@ -5,10 +5,10 @@
 				Gender
 			</mat-card-title>
 			<mat-card-content>
-				<mat-input-container fxFill>
+				<mat-form-field fxFill>
 					<mat-select
 						aria-label="Gender"
-						(change)="onGenderChanged()"
+						(selectionChange)="onGenderChanged()"
 						[(ngModel)]="gender">
 						<mat-option
 							*ngFor="let gender of GENDER_LIST;"
@@ -16,7 +16,7 @@
 							{{gender.display}}
 						</mat-option>
 					</mat-select>
-				</mat-input-container>
+				</mat-form-field>
 			</mat-card-content>
 		</mat-card>
 	</div>
@@ -27,14 +27,14 @@
 				Weight
 			</mat-card-title>
 			<mat-card-content>
-				<mat-input-container fxFill>
+				<mat-form-field fxFill>
 					<input
 						matInput
 						type="number" min="1" max="999"
 						[(ngModel)]="weight"
 						(change)="onWeightChanged()"
 						placeholder="Weight in kilograms"/>
-				</mat-input-container>
+				</mat-form-field>
 			</mat-card-content>
 		</mat-card>
 	</div>
@@ -53,7 +53,7 @@
 			enter "220 bpm <strong>-</strong> YOUR_AGE" as <strong>temporally</strong> value and think to measure it for
 			real.
 		</div>
-		<mat-form-field fxFlex fxFill>
+		<mat-form-field fxFill>
 			<input
 				matInput
 				type="number" min="1" max="999"
@@ -76,7 +76,7 @@
 			Enter your rest heart rate. Lie down in your bed and measure the lower value with an hear rate monitor or <a
 			href="https://www.youtube.com/watch?v=JQwc-DtY5zA" target="_blank">like this</a>.
 		</div>
-		<mat-form-field fxFlex fxFill>
+		<mat-form-field fxFill>
 			<input
 				matInput
 				type="number" min="1" max="999"
@@ -163,14 +163,62 @@
 			activities.
 		</div>
 		<div>
-			<mat-input-container fxFill>
+			<mat-form-field fxFill>
 				<input
 					matInput
 					type="number" min="1" max="999"
 					placeholder="Your cycling FTP in watts"
-					[(ngModel)]="ftp"
+					[(ngModel)]="cyclingFtp"
 					(change)="onCyclingFtpChanged()"/>
-			</mat-input-container>
+			</mat-form-field>
+		</div>
+	</mat-card-content>
+</mat-card>
+
+<mat-card>
+	<mat-card-title>
+		Running Functional Threshold Pace
+	</mat-card-title>
+	<mat-card-content>
+		<div class="howTo">
+			<a [routerLink]="" (click)="runningFtpHint.style.display = 'block'">How to setup running FTP</a>
+		</div>
+		<div class="hint" #runningFtpHint [style.display]="'none'">
+			The Running Functional Threshold Pace is the maximal running pace an athlete can hold during an effort of
+			approximately 45-60min. To measure your running FTP, choose your latest recent race or hard training run of
+			10-15km. If 10km time was greater than 45 min, then use average pace held on 10km. However, if 10km time
+			was less than 45min, then use average pace held on 15km or half marathon. Learn
+			more about determining running functional threshold pace <a
+			href="https://www.trainingpeaks.com/blog/determining-functional-threshold-pace-ftp/"
+			target="_blank">here</a>.
+		</div>
+		<div>
+			<div fxLayout="row" fxLayoutAlign="start center">
+				<mat-form-field fxFlex="75">
+					<input
+						matInput
+						type="number" min="1" max="999"
+						placeholder="Your running FTP in seconds"
+						[(ngModel)]="runningFtp"
+						(change)="onRunningFtpChanged()"/>
+				</mat-form-field>
+				<span fxFlex="1"></span>
+				<mat-form-field fxFlex>
+					<input
+						matInput
+						placeholder="Metric pace"
+						[disabled]="true"
+						[value]="convertToPace('metric')"/>
+				</mat-form-field>
+				<span fxFlex="1"></span>
+				<mat-form-field fxFlex>
+					<input
+						matInput
+						placeholder="Imperial pace"
+						[disabled]="true"
+						[value]="convertToPace('imperial')"/>
+				</mat-form-field>
+			</div>
 		</div>
 	</mat-card-content>
 </mat-card>

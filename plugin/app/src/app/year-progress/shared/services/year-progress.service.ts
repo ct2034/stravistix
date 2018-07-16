@@ -8,14 +8,12 @@ import { ProgressionModel } from "../models/progression.model";
 import { ActivityCountByTypeModel } from "../models/activity-count-by-type.model";
 import { ProgressionAtDayModel } from "../models/progression-at-date.model";
 import { ProgressType } from "../models/progress-type.enum";
-import { Subject } from "rxjs/Subject";
+import { Subject } from "rxjs";
 import { SyncedActivityModel } from "../../../../../../shared/models/sync/synced-activity.model";
+import { Constant } from "../../../../../../shared/Constant";
 
 @Injectable()
 export class YearProgressService {
-
-	public static readonly KM_TO_MILE_FACTOR: number = 0.621371;
-	public static readonly METER_TO_FEET_FACTOR: number = 3.28084;
 
 	public static readonly ERROR_NO_SYNCED_ACTIVITY_MODELS: string = "Empty SyncedActivityModels";
 	public static readonly ERROR_NO_TYPES_FILTER: string = "Empty types filter";
@@ -37,10 +35,11 @@ export class YearProgressService {
 	 * @param {number[]} yearsFilter
 	 * @param {boolean} isMetric
 	 * @param {boolean} includeCommuteRide
+	 * @param {boolean} includeIndoorRide
 	 * @returns {YearProgressModel[]}
 	 */
 	public progression(syncedActivityModels: SyncedActivityModel[], typesFilter: string[], yearsFilter: number[],
-					   isMetric: boolean, includeCommuteRide: boolean): YearProgressModel[] {
+					   isMetric: boolean, includeCommuteRide: boolean, includeIndoorRide: boolean): YearProgressModel[] {
 
 		if (_.isEmpty(syncedActivityModels)) {
 			throw new Error(YearProgressService.ERROR_NO_SYNCED_ACTIVITY_MODELS);
@@ -138,7 +137,7 @@ export class YearProgressService {
 
 				for (let i = 0; i < activitiesFound.length; i++) {
 
-					if (!includeCommuteRide && activitiesFound[i].commute) {
+					if ((!includeCommuteRide && activitiesFound[i].commute)||(!includeIndoorRide && activitiesFound[i].trainer)) {
 						continue;
 					}
 
@@ -155,14 +154,14 @@ export class YearProgressService {
 			let totalDistance = progression.totalDistance / 1000; // KM
 
 			if (!isMetric) {
-				totalDistance *= YearProgressService.KM_TO_MILE_FACTOR; // Imperial (Miles)
+				totalDistance *= Constant.KM_TO_MILE_FACTOR; // Imperial (Miles)
 			}
 			progression.totalDistance = Math.round(totalDistance);
 
 			// Elevation conversion
 			let totalElevation = progression.totalElevation; // Meters
 			if (!isMetric) {
-				totalElevation *= YearProgressService.METER_TO_FEET_FACTOR; // Imperial (feet)
+				totalElevation *= Constant.METER_TO_FEET_FACTOR; // Imperial (feet)
 			}
 			progression.totalElevation = Math.round(totalElevation);
 

@@ -9,10 +9,10 @@ export class SpeedDataView extends AbstractDataView {
 
 	constructor(speedData: SpeedDataModel, units: string) {
 		super(units);
-		this.mainColor = [9, 123, 219];
+		this.mainColor = [36, 130, 210];
 		this.setGraphTitleFromUnits();
 		this.speedData = speedData;
-		this.speedUnitsData = Helper.getSpeedUnitData();
+		this.speedUnitsData = Helper.getSpeedUnitData(window.currentAthlete.get("measurement_preference"));
 		this.setupDistributionGraph(this.speedData.speedZones, this.speedUnitsData.speedUnitFactor);
 		this.setupDistributionTable(this.speedData.speedZones, this.speedUnitsData.speedUnitFactor);
 	}
@@ -34,7 +34,7 @@ export class SpeedDataView extends AbstractDataView {
 	protected insertDataIntoGrid(): void {
 
 		if (_.isNumber(this.speedData.best20min) && !this.isSegmentEffortView) {
-			this.insertContentAtGridPosition(0, 0, this.printNumber(this.speedData.best20min, 0), "Best 20min Speed <sup style='color:#FC4C02; font-size:12px; position: initial;'>NEW</sup>", this.speedUnitsData.speedUnitPerHour, "displayAdvancedSpeedData");
+			this.insertContentAtGridPosition(0, 0, this.printNumber(this.speedData.best20min, 1), "Best 20min Speed <sup style='color:#FC4C02; font-size:12px; position: initial;'>NEW</sup>", this.speedUnitsData.speedUnitPerHour, "displayAdvancedSpeedData");
 		}
 
 		// Quartiles
